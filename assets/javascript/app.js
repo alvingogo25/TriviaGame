@@ -2,53 +2,65 @@ var trivia = [
   {
     "question": "What is Andy's sister's name?",
     "guess" : ["Molly", "Emily", "Sally", "Bonnie"],
-    "answer" : "Molly"
+    "answer" : "Molly",
+    "image" : "molly.jpg"
   },
   {
     "question" : "What year was the first Toy Story movie released?",
     "guess" : ["1992", "1995", "2000", "2005"],
-    "answer" : "1995"
+    "answer" : "1995",
+    "image" : "95.png"
   },
   {
     "question" : "What country were the Woody’s Round up toys being sent to?",
     "guess" : ["China", "Germany", "Japan", "France"],
-    "answer" : "Japan"
+    "answer" : "Japan",
+    "image" : "far_east.png"
   },
   {
     "question" : "Who is Buzz Lightyear’s father?",
     "guess" : ["An Alien", "Zurg", "Mattel", "Andy"],
-    "answer" : "Zurg"
+    "answer" : "Zurg",
+    "image" : "zurg.jpg"
   },
   {
     "question" : "What is the name of Andy’s dog?",
     "guess" : ["Buster", "Cooper", "Bullseye", "Doug"],
-    "answer" : "Buster"
+    "answer" : "Buster",
+    "image" : "buster.jpg"
   },
   {
     "question" : "Lotso smells like what fruit?",
     "guess" : ["Cantaloupe", "Cherry", "Strawberry", "Grape"],
-    "answer" : "Strawberry"
+    "answer" : "Strawberry",
+    "image" : "Lotso.jpg"
   },
   {
     "question" : "Which of the phrase does Woody say when his string is pulled?",
     "guess" : ["There’s a snake in my boot!", "You’ve got a friend in me", "Ride like the wind Bullseye!", "Sheriff Woody’s in town"],
-    "answer" : "There’s a snake in my boot!"
+    "answer" : "There’s a snake in my boot!",
+    "image" : "pull.png"
   },
   {
     "question" : "What is the name of the daycare the toys are being donated to?",
     "guess" : ["Hillside", "Sunnyside", "Tri-County", "Sunny State"],
-    "answer" : "Sunnyside"
+    "answer" : "Sunnyside",
+    "image" : "Sunnyside.jpg"
   },
   {
     "question" : "What is the name of the toy store in Toy Story 2?",
     "guess" : ["Mattel SuperStore", "Play Planet", "Toy Planet", "Al’s Toy Barn"],
-    "answer" : "Al’s Toy Barn"
+    "answer" : "Al’s Toy Barn",
+    "image" : "Als.jpg"
   }
 ]
 
 var questionCount = 0;
 var correct = 0;
 var incorrect = 0;
+var unanswered = 0;
+var time = 10;
+var tmr;
 
 $(document).ready(function(){
   $("#start").click(function() {
@@ -57,11 +69,22 @@ $(document).ready(function(){
     loadQuestion();
   });
 });
-// function timer() {
-//
-// }
+
+function timer() {
+  time--;
+  if (time >= 0){
+    $('#timer').text("Time Remaining: " + time)
+  }
+  if (time === 0) {
+    $('#timer').text("Time is up!")
+    checkAnswer();
+  }
+}
 
 function loadQuestion () {
+  time = 10;
+  tmr = setInterval(timer,1000);
+  $('#timer').text("Time Remaining: " + time);
   // load one question with guesses
   $('#result').empty();
   $('#questions-here').css('display','inline')
@@ -84,48 +107,56 @@ function loadQuestion () {
     }
   }
   questionCount++;
-  console.log(questionCount);
-  answerQuestion();
+  // console.log(questionCount);
+  $('p').click(checkAnswer);
 }
 
 // checks if user guess is right or wrong and displays appropriate response
-function answerQuestion () {
-  $('p').click(function() {
-    if (questionCount < trivia.length){
-      // checks inputs for data attribute true
-      var check = $(this).attr('data');
-      // updates correct/incorrect counter
-      $('#questions-here').css('display','none');
-      if (check === "answer") {
-        correct++;
-        $('#result').text("You're correct!")
-      }
-      else {
-        incorrect++;
-        $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
-      };
-      console.log(check, correct, incorrect);
-
-      // loads next question
-      setTimeout("$('#questions-here').empty()", 1000);
-      setTimeout(loadQuestion, 1000);
+function checkAnswer() {
+  clearInterval(tmr);
+  if (questionCount < trivia.length){
+    // checks inputs for data attribute true
+    var check = $(this).attr('data');
+    // updates correct/incorrect counter
+    $('#questions-here').css('display','none');
+    if (check === "answer") {
+      correct++;
+      $('#result').text("You're correct!")
     }
-    else{end()}
-  })
-}
+    else {
+      if (check === "wrong"){
+        incorrect++;
+      }
+      if (!check){
+        unanswered++;
+      }
+      $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
+    };
+    // console.log(check, correct, incorrect);
+
+    // loads next question after showing answers
+    setTimeout("$('#questions-here').empty()", 2000);
+    setTimeout(loadQuestion, 2000);
+  }
+  else{
+    end();
+  }
+};
 
 // shows game results
 function end () {
+  $('#timer').empty();
   $('#questions-here').empty();
   var pc = $('<p id="crct">');
   var pi = $("<p id='incrct'>");
+  var pu = $("<p id='none'>")
   pc.text("Correct: " + correct);
   pi.text("Incorrect: " + incorrect);
-  $('#result').append(pc, pi);
+  pu.text("Unanswered: " + unanswered);
+  $('#result').append(pc, pi, pu);
   $('#result').append('<div id="playAgain">Play Again?');
   $('#playAgain').click(reset);
 }
-
 
 function reset () {
   questionCount = 0;
