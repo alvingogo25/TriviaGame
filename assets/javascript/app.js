@@ -64,7 +64,7 @@ var tmr;
 
 $(document).ready(function(){
   $("#start").click(function() {
-    $("#game").css({"display": "inline"});
+    // $("#game").css({"display": "inline"});
     $('#startPage').css({"display": "none"});
     loadQuestion();
   });
