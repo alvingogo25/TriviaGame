@@ -36,7 +36,7 @@ var trivia = [
   },
   {
     "question" : "What is the name of the daycare the toys are being donated to?",
-    "guess" : ["Hillside", "Sunnyside", "Tri-State", "Sunny State"],
+    "guess" : ["Hillside", "Sunnyside", "Tri-County", "Sunny State"],
     "answer" : "Sunnyside"
   },
   {
@@ -46,39 +46,90 @@ var trivia = [
   }
 ]
 
+var questionCount = 0;
+var correct = 0;
+var incorrect = 0;
+
 $(document).ready(function(){
   $("#start").click(function() {
     $("#game").css({"display": "inline"});
     $('#startPage').css({"display": "none"});
-    triviaGame();
+    loadQuestion();
   });
-
-
-
-
 });
-
-function triviaGame() {
-  // loads all questions
-  for (var i=0; i < trivia.length; i++){
-    var q = $("<div id='q" + i + "'>");
-    $('#questions-here').append(q);
-    $('#q'+ i).html("<h4>" + trivia[i].question + "</h4>");
-    for (var j= 0; j< trivia[i].guess.length; j++){
-      var guesses = $("<input type='radio' value='" + trivia[i].guess[j] + "' name='gues" + i +"'>" );
-      $('#q' + i).append(guesses, trivia[i].guess[j]);
-    }
-  }
-  $('#questions-here').append("<input id='done' type='submit' value='Done'>");
-}
-
 // function timer() {
 //
 // }
-// $('#questions-here').submit(function() {
-// var array = [];
-//   var inputs = $('input :checked').val();
-//   array.push(inputs)
-// console.log(array);
-//
-// })
+
+function loadQuestion () {
+  // load one question with guesses
+  $('#result').empty();
+  $('#questions-here').css('display','inline')
+  var q = $("<div id='qstn'>");
+  $('#questions-here').append(q);
+  $('#qstn').html("<h4>" + trivia[questionCount].question + "</h4>");
+  for (var j= 0; j< trivia[questionCount].guess.length; j++){
+    var guesses = $("<p id='" + j + "'>");
+    $('#qstn').append(guesses);
+    $('#'+j).text(trivia[questionCount].guess[j]);
+    $('#'+j).attr('value', trivia[questionCount].guess[j]);
+
+    // correct answer input will have flag true
+    if (trivia[questionCount].guess[j] === trivia[questionCount].answer){
+      $('#'+j).attr("data", "answer");
+      $('#'+j).addClass('rightOne');
+    }
+    else {
+      $('#'+j).attr('data', "wrong");
+    }
+  }
+  questionCount++;
+  console.log(questionCount);
+  answerQuestion();
+}
+
+// checks if user guess is right or wrong and displays appropriate response
+function answerQuestion () {
+  $('p').click(function() {
+    if (questionCount < trivia.length){
+      // checks inputs for data attribute true
+      var check = $(this).attr('data');
+      // updates correct/incorrect counter
+      $('#questions-here').css('display','none');
+      if (check === "answer") {
+        correct++;
+        $('#result').text("You're correct!")
+      }
+      else {
+        incorrect++;
+        $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
+      };
+      console.log(check, correct, incorrect);
+
+      // loads next question
+      setTimeout("$('#questions-here').empty()", 1000);
+      setTimeout(loadQuestion, 1000);
+    }
+    else{end()}
+  })
+}
+
+// shows game results
+function end () {
+  $('#questions-here').empty();
+  var pc = $('<p id="crct">');
+  var pi = $("<p id='incrct'>");
+  pc.text("Correct: " + correct);
+  pi.text("Incorrect: " + incorrect);
+  $('#result').append(pc, pi);
+  $('#result').append('<div id="playAgain">Play Again?');
+  $('#playAgain').click(reset);
+}
+
+
+function reset () {
+  questionCount = 0;
+  correct = 0;
+  incorrect = 0;
+  loadQuestion();
+}
