@@ -52,7 +52,14 @@ var trivia = [
     "guess" : ["Mattel SuperStore", "Play Planet", "Toy Planet", "Al’s Toy Barn"],
     "answer" : "Al’s Toy Barn",
     "image" : "Als.jpg"
+  },
+  {
+    "question" : "What is the military unit Buzz Lightyear is part of?",
+    "guess" : ["Planet Protector Corps", "Space Heroes", "Space Ranger Corps", "LGM"],
+    "answer" : "Space Ranger Corps",
+    "image" : "buzz.gif"
   }
+
 ]
 
 var questionCount = 0;
@@ -63,7 +70,7 @@ var time = 10;
 var tmr;
 
 $(document).ready(function(){
-  $("#start").click(function() {
+  $("#startPage").click(function() {
     // $("#game").css({"display": "inline"});
     $('#startPage').css({"display": "none"});
     loadQuestion();
@@ -106,14 +113,18 @@ function loadQuestion () {
       $('#'+j).attr('data', "wrong");
     }
   }
-  questionCount++;
+
   // console.log(questionCount);
+  $('p').hover(function() {
+    $(this).toggleClass('box');
+  })
   $('p').click(checkAnswer);
 }
 
 // checks if user guess is right or wrong and displays appropriate response
 function checkAnswer() {
   clearInterval(tmr);
+
   if (questionCount < trivia.length){
     // checks inputs for data attribute true
     var check = $(this).attr('data');
@@ -131,15 +142,25 @@ function checkAnswer() {
         unanswered++;
       }
       $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
-    };
-    // console.log(check, correct, incorrect);
 
+    };
+    questionCount++;
+    // displays image with answer
+    var img = trivia[questionCount-1].image;
+    var resultImg = $('<img>');
+    $('#result').append(resultImg);
+    resultImg.attr('src', "assets/images/" + img);
+    resultImg.addClass('imgsize');
+  }
+  if (questionCount > trivia.length){
+    end();
+  }
+  else {
+    // console.log(check, correct, incorrect);
+    console.log(questionCount);
     // loads next question after showing answers
     setTimeout("$('#questions-here').empty()", 2000);
     setTimeout(loadQuestion, 2000);
-  }
-  else{
-    end();
   }
 };
 
@@ -155,6 +176,7 @@ function end () {
   pu.text("Unanswered: " + unanswered);
   $('#result').append(pc, pi, pu);
   $('#result').append('<div id="playAgain">Play Again?');
+  $('#playAgain').addClass('box');
   $('#playAgain').click(reset);
 }
 

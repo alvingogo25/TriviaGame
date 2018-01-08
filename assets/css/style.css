@@ -12,15 +12,13 @@ body {
 }
 
 #startPage {
-  width: 70%;
   margin: 0 auto;
   text-align: center;
-}
-
-#start {
   margin-top: 150px;
+  padding-top: 28px;
   height: 50px;
-  width: 100px;
+  width: 200px;
+  font-size: 30px;
 }
 
 #game {
@@ -33,11 +31,40 @@ body {
 }
 
 p {
-  padding: 5px;
-  width: 200px;
+  padding: 23px 15px 18px 15px;
   margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: max-content;
+  min-width: 200px;
 }
-p:hover {
+
+#qstn p:hover {
+  padding-bottom: 14px;
+  padding-top: 19px;
+}
+
+#result {
+  margin-top: 32.35px;
+}
+
+.box {
+  cursor: pointer;
   border: solid;
-  background-color: white;
+  border-color: #005194;
+  background-color: #FFD900;
+  border-width: 4px;
+}
+
+#playAgain {
+  width: 200px;
+  margin: auto;
+  padding: 23px 15px 18px 15px;
+}
+
+.imgsize {
+  max-height: 300px;
+  display: block;
+  margin: auto;
+  margin-top: 15px;
 }
