@@ -71,7 +71,6 @@ var tmr;
 
 $(document).ready(function(){
   $("#startPage").click(function() {
-    // $("#game").css({"display": "inline"});
     $('#startPage').css({"display": "none"});
     loadQuestion();
   });
@@ -97,24 +96,25 @@ function loadQuestion () {
   $('#questions-here').css('display','inline')
   var q = $("<div id='qstn'>");
   $('#questions-here').append(q);
+  // creates line for question
   $('#qstn').html("<h4>" + trivia[questionCount].question + "</h4>");
+  // creates answer choices with same value
   for (var j= 0; j< trivia[questionCount].guess.length; j++){
     var guesses = $("<p id='" + j + "'>");
     $('#qstn').append(guesses);
     $('#'+j).text(trivia[questionCount].guess[j]);
     $('#'+j).attr('value', trivia[questionCount].guess[j]);
 
-    // correct answer input will have flag true
+    // assigns data attribute answer or wrong
     if (trivia[questionCount].guess[j] === trivia[questionCount].answer){
       $('#'+j).attr("data", "answer");
-      $('#'+j).addClass('rightOne');
     }
     else {
       $('#'+j).attr('data', "wrong");
     }
   }
-
-  // console.log(questionCount);
+  questionCount++;
+  // changes answer selection display on hover
   $('p').hover(function() {
     $(this).toggleClass('box');
   })
@@ -123,44 +123,43 @@ function loadQuestion () {
 
 // checks if user guess is right or wrong and displays appropriate response
 function checkAnswer() {
+  // stops the timer
   clearInterval(tmr);
 
-  if (questionCount < trivia.length){
-    // checks inputs for data attribute true
-    var check = $(this).attr('data');
-    // updates correct/incorrect counter
-    $('#questions-here').css('display','none');
-    if (check === "answer") {
-      correct++;
-      $('#result').text("You're correct!")
-    }
-    else {
-      if (check === "wrong"){
-        incorrect++;
-      }
-      if (!check){
-        unanswered++;
-      }
-      $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
+  // checks if user selected correct answer
+  var check = $(this).attr('data');
 
-    };
-    questionCount++;
-    // displays image with answer
-    var img = trivia[questionCount-1].image;
-    var resultImg = $('<img>');
-    $('#result').append(resultImg);
-    resultImg.attr('src', "assets/images/" + img);
-    resultImg.addClass('imgsize');
-  }
-  if (questionCount > trivia.length){
-    end();
+  $('#questions-here').css('display','none');
+  // updates correct/incorrect counter and shows answer result
+  if (check === "answer") {
+    correct++;
+    $('#result').text("You're correct!")
   }
   else {
-    // console.log(check, correct, incorrect);
-    console.log(questionCount);
+    if (check === "wrong"){
+      incorrect++;
+    }
+    if (!check){
+      unanswered++;
+    }
+    $('#result').text("The correct answer is: " + trivia[questionCount-1].answer)
+  };
+
+  // displays image with result
+  var img = trivia[questionCount-1].image;
+  var resultImg = $('<img>');
+  $('#result').append(resultImg);
+  resultImg.attr('src', "assets/images/" + img);
+  resultImg.addClass('imgsize');
+
+  // conditional for last question
+  if (questionCount == trivia.length){
+    setTimeout(end, 2500);
+  }
+  else {
     // loads next question after showing answers
-    setTimeout("$('#questions-here').empty()", 2000);
-    setTimeout(loadQuestion, 2000);
+    setTimeout("$('#questions-here').empty()", 2500);
+    setTimeout(loadQuestion, 2500);
   }
 };
 
@@ -168,14 +167,14 @@ function checkAnswer() {
 function end () {
   $('#timer').empty();
   $('#questions-here').empty();
+  $('#result').empty();
   var pc = $('<p id="crct">');
   var pi = $("<p id='incrct'>");
   var pu = $("<p id='none'>")
   pc.text("Correct: " + correct);
   pi.text("Incorrect: " + incorrect);
   pu.text("Unanswered: " + unanswered);
-  $('#result').append(pc, pi, pu);
-  $('#result').append('<div id="playAgain">Play Again?');
+  $('#result').append(pc, pi, pu, '<div id="playAgain">Play Again?');
   $('#playAgain').addClass('box');
   $('#playAgain').click(reset);
 }
